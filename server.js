@@ -25,6 +25,25 @@ function normalizeText(text) {
     .trim();
 }
 
+function extractOrderIdFromEmail(emailText) {
+  const text = String(emailText || "");
+
+  const patterns = [
+    /Megrendel[eé]s k[oó]dja[:\s]+(GC\d+)/i,
+    /Megrendel[eé]s[:\s]+(GC\d+)/i,
+    /\b(GC\d{3,})\b/i
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match && match[1]) {
+      return match[1].toUpperCase();
+    }
+  }
+
+  return `UNKNOWN-${Date.now()}`;
+}
+
 function countAirFreshenersFromEmail(emailText) {
   if (!emailText || typeof emailText !== "string") return 0;
 
@@ -89,14 +108,43 @@ app.post("/webhook", async (req, res) => {
     console.log("Új adat érkezett.");
     console.log("emailText hossza:", emailText.length);
 
+    const orderId = extractOrderIdFromEmail(emailText);
     const quantity = countAirFreshenersFromEmail(emailText);
 
+    console.log("Rendelés azonosító:", orderId);
     console.log("Talált autóillatosító darabszám:", quantity);
 
     if (quantity <= 0) {
       return res.status(200).json({
         success: true,
         message: "Nem találtam autóillatosítót ebben az e-mailben.",
+        orderId,
+        quantity: 0
+      });
+    }
+
+    const { data: existingOrder, error: existingError } = await supabase
+      .from("campaign_events")
+      .select("id, order_id")
+      .eq("order_id", orderId)
+      .maybeSingle();
+
+    if (existingError) {
+      console.error("Supabase ellenőrzési hiba:", existingError);
+      return res.status(500).json({
+        success: false,
+        error: existingError.message
+      });
+    }
+
+    if (existingOrder) {
+      console.log("Ez a rendelés már feldolgozva:", orderId);
+
+      return res.status(200).json({
+        success: true,
+        duplicate: true,
+        message: "Ez a rendelés már feldolgozva, nem számolom újra.",
+        orderId,
         quantity: 0
       });
     }
@@ -105,7 +153,7 @@ app.post("/webhook", async (req, res) => {
       .from("campaign_events")
       .insert([
         {
-          order_id: "",
+          order_id: orderId,
           customer: "Vásárló",
           qty: quantity,
           donation: quantity * 500
@@ -123,7 +171,9 @@ app.post("/webhook", async (req, res) => {
 
     res.status(200).json({
       success: true,
+      duplicate: false,
       message: "Kampány esemény mentve.",
+      orderId,
       quantity,
       data
     });

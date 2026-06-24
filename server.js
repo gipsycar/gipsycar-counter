@@ -11,7 +11,8 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 const PORT = process.env.PORT || 3000;
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -104,9 +105,10 @@ app.post("/webhook", async (req, res) => {
       .from("campaign_events")
       .insert([
         {
-          quantity,
-          source: "shoptet_email",
-          raw_email: emailText
+          order_id: "",
+          customer: "Vásárló",
+          qty: quantity,
+          donation: quantity * 500
         }
       ])
       .select();
@@ -139,7 +141,7 @@ app.get("/stats", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("campaign_events")
-      .select("quantity");
+      .select("qty");
 
     if (error) {
       console.error("Stats Supabase hiba:", error);
@@ -147,7 +149,7 @@ app.get("/stats", async (req, res) => {
     }
 
     const total = data.reduce((sum, row) => {
-      return sum + Number(row.quantity || 0);
+      return sum + Number(row.qty || 0);
     }, 0);
 
     res.json({

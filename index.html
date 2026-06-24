@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>GipsyCar kampány számláló</title>
+</head>
+<body style="font-family: Arial; text-align:center; padding-top:80px;">
+
+  <h1>🎒 Iskolakezdési támogatás</h1>
+
+  <p>Eddig összegyűlt:</p>
+
+  <h2 id="total">Betöltés...</h2>
+
+  <script>
+    async function loadStats() {
+      const response = await fetch("http://localhost:3000/stats");
+      const data = await response.json();
+
+      document.getElementById("total").innerText =
+        data.total.toLocaleString("hu-HU") + " Ft";
+    }
+
+    loadStats();
+    setInterval(loadStats, 5000);
+  </script>
+
+</body>
+</html>

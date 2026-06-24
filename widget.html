@@ -1,166 +1,46 @@
-<!DOCTYPE html>
-<html lang="hu">
-<head>
-<meta charset="UTF-8">
-<style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-}
-
-.gipsy-counter{
-    max-width:1100px;
-    margin:0 auto;
-    background:
-        radial-gradient(circle at top left, rgba(255,122,0,.18), transparent 30%),
-        linear-gradient(135deg,#070707,#151515);
-    color:#fff;
-    border:2px solid #c88a2b;
-    border-radius:18px;
-    padding:22px;
-    box-shadow:0 8px 24px rgba(0,0,0,.35);
-    overflow:hidden;
-}
-
-.gc-top{
-    text-align:center;
-    color:#f7b84b;
-    font-size:24px;
-    font-weight:800;
-    letter-spacing:2px;
-    margin-bottom:18px;
-}
-
-.gc-grid{
-    display:grid;
-    grid-template-columns:1.1fr 1.2fr 1fr;
-    gap:22px;
-    align-items:center;
-}
-
-.gc-message{
-    font-size:25px;
-    line-height:1.35;
-    font-style:italic;
-}
-
-.gc-message span{
-    color:#ff7a00;
-    font-weight:800;
-}
-
-.gc-card{
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.18);
-    border-radius:14px;
-    padding:18px;
-    text-align:center;
-}
-
-.gc-label{
-    color:#f7b84b;
-    font-size:15px;
-    font-weight:800;
-    letter-spacing:1px;
-    margin-bottom:8px;
-}
-
-.gc-money{
-    color:#ff7a00;
-    font-size:48px;
-    font-weight:900;
-    text-shadow:0 0 12px rgba(255,122,0,.45);
-    animation:pulse 2.5s infinite ease-in-out;
-}
-
-.gc-count{
-    color:#ff7a00;
-    font-size:48px;
-    font-weight:900;
-    text-shadow:0 0 12px rgba(255,122,0,.45);
-}
-
-.gc-small{
-    font-size:15px;
-    font-weight:700;
-    margin-top:6px;
-}
-
-.gc-heart{
-    color:#ff7a00;
-    font-size:34px;
-    animation:heart 1.8s infinite ease-in-out;
-}
-
-@keyframes pulse{
-    0%,100%{transform:scale(1);}
-    50%{transform:scale(1.04);}
-}
-
-@keyframes heart{
-    0%,100%{transform:scale(1);}
-    50%{transform:scale(1.15);}
-}
-
-@media(max-width:800px){
-    .gc-grid{
-        grid-template-columns:1fr;
-        text-align:center;
-    }
-
-    .gc-message{
-        font-size:22px;
-    }
-
-    .gc-money,
-    .gc-count{
-        font-size:42px;
-    }
-}
-</style>
-</head>
-<body>
-
 <div class="gipsy-counter">
-    <div class="gc-top">GIPSY CAR</div>
 
-    <div class="gc-grid">
+    <div class="glow glow1"></div>
+    <div class="glow glow2"></div>
 
-        <div class="gc-message">
-            Minden eladott <span>autóillatosító</span> árából 
-            <span>500 Ft-ot</span> rászoruló gyermekek tanszereire fordítunk.
+    <div class="gc-title">
+        GIPSY CAR ❤️
+    </div>
+
+    <div class="gc-message">
+        Minden eladott <strong>autóillatosító</strong>
+        árából <strong>500 Ft-ot</strong>
+        rászoruló gyermekek tanszereire fordítunk.
+    </div>
+
+    <div class="gc-stats">
+
+        <div class="gc-card">
+            <div class="gc-label">
+                💰 EDDIG ÖSSZEGYŰLT
+            </div>
+
+            <div class="gc-value">
+                <span id="donation">...</span> Ft
+            </div>
         </div>
 
         <div class="gc-card">
-            <div class="gc-label">EDDIG ÖSSZEGYŰLT</div>
-            <div class="gc-money"><span id="donation">...</span> Ft</div>
-        </div>
 
-        <div class="gc-card">
-            <div class="gc-count"><span id="count">...</span> db</div>
-            <div class="gc-small">AUTÓILLATOSÍTÓ ELADVA</div>
-            <div class="gc-heart">♡</div>
+            <div class="gc-value">
+                <span id="count">...</span> db
+            </div>
+
+            <div class="gc-small">
+                🚗 AUTÓILLATOSÍTÓ ELADVA
+            </div>
+
         </div>
 
     </div>
+
+    <div class="hearts">
+        ❤️ ❤️ ❤️
+    </div>
+
 </div>
-
-<script>
-async function loadCounter() {
-    const response = await fetch("https://gipsycar-counter.onrender.com/stats");
-    const data = await response.json();
-
-    const total = Number(data.total || 0);
-    const donation = total * 500;
-
-    document.getElementById("count").innerText = total;
-    document.getElementById("donation").innerText =
-        donation.toLocaleString("hu-HU");
-}
-
-loadCounter();
-setInterval(loadCounter, 60000);
-</script>
-
-</body>
-</html>

@@ -20,24 +20,41 @@ body{
 
 .number{
     color:#ff7a00;
-    font-size:40px;
+    font-size:48px;
     font-weight:bold;
+    margin-bottom:10px;
 }
 
 .text{
     font-size:20px;
-    line-height:1.5;
+    line-height:1.6;
+}
+
+.money{
+    margin-top:10px;
+    font-size:28px;
+    font-weight:bold;
+    color:#ff7a00;
 }
 </style>
 </head>
 <body>
 
 <div class="counter-box">
-    <div class="number" id="count">...</div>
+
+    <div class="number">
+        <span id="count">...</span> db
+    </div>
 
     <div class="text">
-        autóillatosítóval támogattátok az iskolakezdési csomagokat ❤️
+        Eddig összegyűlt<br>
+        <strong><span id="count2">...</span> db illatosító által</strong>
     </div>
+
+    <div class="money">
+        <span id="donation">...</span> Ft ❤️
+    </div>
+
 </div>
 
 <script>
@@ -49,8 +66,11 @@ async function loadCounter() {
 
     const data = await response.json();
 
-    document.getElementById("count").innerText =
-        data.total;
+    document.getElementById("count").innerText = data.total;
+    document.getElementById("count2").innerText = data.total;
+
+    document.getElementById("donation").innerText =
+        (data.total * 500).toLocaleString("hu-HU");
 }
 
 loadCounter();
